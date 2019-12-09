@@ -24,3 +24,6 @@ Thumbs.db
 
 # Objects files
 *.o
+
+# Pillar support files
+LLVM-C-Tutorial/_support

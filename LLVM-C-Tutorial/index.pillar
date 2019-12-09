@@ -1,0 +1,6 @@
+!LLVM-C: Tutorial
+
+
+${inputFile:path=Chapters/0-Installation/installation.pillar}$
+
+${inputFile:path=Chapters/Chapter2/chapter2.pillar}$

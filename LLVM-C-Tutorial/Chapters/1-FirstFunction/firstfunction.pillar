@@ -1,0 +1,150 @@
+!!First function in LLVM IR
+
+!!!Presentation
+In this chapter, we will be using the "LLVM C bindings" to build an in-memory
+representation of an extremely simple function. In order to do so, we will work
+around a ==sum== function whose C equivalent would be:
+
+[[[language=c
+int sum(int a, int b) {
+    return a + b;
+}
+]]]
+
+In order to use the "LLVM C bindings", we will define the succession of functions
+to be used in a C program. We will perform in a manual way what an actual compiler
+could do to an "Abstract Syntax Tree" result of the function.
+
+!!!Base components
+!!!!Module
+The top-level structure in an LLVM program is a module. The official documentation
+describes this element as "a translation unit or a collection of translation units
+merged together" which basically means the module will keep track of functions, global
+variables, external references and symbols. They are the top-level container for
+all things defined in LLVM. We can create one by doing as follows:
+
+[[[language=c
+LLVMModuleRef mod = LLVMModuleCreateWithName("llvm_c_tutorial");
+]]]
+
+!!!!Types
+In order to create the ==sum== function and add it to the module, we need the
+following components:
+
+- its return type
+- its parameters type (vector)
+- a set of basic blocks
+
+Let's first look at the prototype of the function (return and parameters type).
+Those can be defined in LLVM using the ==LLVMTypeRef== holding all the types
+of the LLVM IR.
+
++LLVM Type Hierarchy>figures/llvm_types.png
+
+Using those types, we can now build our function prototype. Starting with the
+parameters type, we can define an ==LLVMTypeRef== vector:
+
+[[[language=c
+LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
+]]]
+
+Note that all the types in LLVM can be used with the LLVM<type>Type() constructor.
+This is the case with our two ==LLVMInt32Type()==. Next comes the function type
+that is defined as follows:
+
+[[[language=c
+LLVMTypeRef ret_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
+]]]
+
+The ==LLVMFunctionType== constructor takes for arguments:
+# the function's return type
+# the function's parameters type vector
+# the function's arrity
+# a boolean telling if the function is variadic or not (accepts a variable number of arguments)
+
+Finally, we can add the function we just defined to the module we defined earlier,
+give it a name and get an ==LLVMValueRef== as a result. This reference is the
+concrete location of the function in memory.
+
+!!!!Basic Blocks
+A basic block represents a single entry or exit section of code, it contains a
+list of instructions which for the body of the block and they belong to functions.
+Those blocks only have an entry and exit point, meaning the list of instructions
+will have to be executed from the beginning to the end. This means there cannot
+be conditional loops or jumps of any kind inside those basic blocks. We can define
+our basic block as follows:
+
+[[[language=c
+LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum, "entry");
+]]]
+
+The ==LLVMAppendBasicBlock== links the "entry" basic block to our previously defined
+function. We now have a module that contains all the references to the function
+we wanted to define and the different types and basic blocks it needed.
+
+!!!!Instruction Builder
+In order to add instructions to our function's unique basic block, we need to use
+an ==Instruction Builder==. This component is described in the documentation as:
+"a point within a basic block and is the exclusive means of building instructions
+using the C interface". In the same way we added the basic block to the function,
+we position the builder to start in the entry of the basic block.
+
+[[[language=c
+LLVMBuilderRef builder = LLVMCreateBuilder();
+LLVMPositionBuilderAtEnd(builder, entry);
+]]]
+
+!!!!Analysis
+Our module is complete and we can check for any errors or exceptions by using the
+tools present in the ==analysis== library. The code snippet that will analyse our
+module and report for any errors is the following:
+[[[language=c
+char *error = NULL;
+LLVMVerifyModule(mod, LLVMAbortProcessAction, &error);
+LLVMDisposeMessage(error);
+]]]
+
+!!!IR Generation
+Now, the LLVM IR is a very strictly defined language that can be qualified as a
+midway point between assembly and C. This LLVM IR can take three different forms
+and aims at platform portability. Those three forms are the following:
+
+- an in-memory set of objects, which we are using here
+- a textual language like assembly
+- a string of bytes binary encoded, called bitcode
+
+We are currently using the first form but we can get the two others. Let's start
+by writing the bitcode of the module to a file. In order to do so, we will use the
+==bitwriter== library:
+
+[[[language=c
+if (LLVMWriteBitcodeToFile(mod, "sum.bc") != 0) {
+    fprintf(stderr, "error writing bitcode to file, skipping\n");
+}
+]]]
+
+The bitcode will then be written to the file ==sum.bc==. This bitcode is the
+second form of the IR.
+
++IR Bitcode>figures/bitcode_sum.png
+
+We can finally get the text output by using one of the LLVM tools, the disassembler.
+This tool allows disassembling bitcode and outputting the IR textual representation.
+It can be done by using ==llvm-dis== as follows:
+
+[[[language=bash
+$ llvm-dis sum.bc
+]]]
+
+If we now look at the output ==sum.ll==, we can see:
+
+[[[language=llvm
+; ModuleID = 'sum.bc'
+target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
+
+define i32 @sum(i32, i32) {
+entry:
+  %tmp = add i32 %0, %1
+  ret i32 %tmp
+}
+]]]

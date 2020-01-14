@@ -59,7 +59,7 @@ LLVMTypeRef ret_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
 The ==LLVMFunctionType== constructor takes for arguments:
 # the function's return type
 # the function's parameters type vector
-# the function's arrity
+# the function's arity
 # a boolean telling if the function is variadic or not (accepts a variable number of arguments)
 
 Finally, we can add the function we just defined to the module we defined earlier,
@@ -92,6 +92,26 @@ we position the builder to start in the entry of the basic block.
 [[[language=c
 LLVMBuilderRef builder = LLVMCreateBuilder();
 LLVMPositionBuilderAtEnd(builder, entry);
+]]]
+
+Now comes the function itself. We need to add the two arguments of our function
+and return the result. In order to do this, we first have to retrieve the parameters
+passed to the function. This can be done with the function ==LLVMGetParam()== that
+takes a reference to the function and the index of the wished parameter. Then,
+we need to properly add them using ==LLVMBuildAdd== providing a return holder
+(==tmp== here). ==LLVMBuildAdd== takes the two integers to add and a name to give
+to the result. Note that this name is required due to LLVM's policy saying that
+all instructions have to produce intermediate results
+
+[[[
+LLVMValueRef tmp = LLVMBuildAdd(builder, LLVMGetParam(sum, 0), LLVMGetParam(sum, 1), "tmp");
+]]]
+
+Next, we call ==LLVMBuildRet== to generate the return statement and arrange for
+the temporary result.
+
+[[[
+LLVMBuildRet(builder, tmp);
 ]]]
 
 !!!!Analysis
@@ -148,3 +168,6 @@ entry:
   ret i32 %tmp
 }
 ]]]
+
+
+!!!Machine code generation

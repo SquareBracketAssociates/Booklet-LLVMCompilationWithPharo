@@ -1,0 +1,5 @@
+Array
+void* --> Opaque
+FFIArray at: put:
+Shared pool pour les aliases
+Appel via les sous-classes

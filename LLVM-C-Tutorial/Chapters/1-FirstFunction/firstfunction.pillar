@@ -206,20 +206,9 @@ $ make sum.ll
 
 Note that ==make all== is the equivalent of ==make sum==.
 
-!!!Machine code generation
-Here we generated the bitcode for the host machine. How can we specify the
-target machine and architecture we want to generate code for (and by code I mean
-machine code)?
+!!!Summary
 
-In order to answer this issue, LLVM uses a ==Target== representation of any
-architecture and a ==Triple== as a textual descriptor of the architecture, vendor
-and operating system.
-
-Basically, ==Triple==s are helpers for configuration. Their names come from the
-fact that they used to contain only three fields and are strings in the canonical
-form of:
-ARCHITECTURE - VENDOR - OPERATING SYSTEM (- ENVIRONMENT)
-
-If some of the fields are not specified, the default ones will be used. The list
-of all the architectures, vendors, operating systems and environments can be found
-under: https://llvm.org/doxygen/classllvm_1_1Triple.html#details.
+What did we learn in this chapter?
+We learned how to build a function using the LLVM IR and create the bitcode
+related to this IR. In order to do so, we explored the different types and
+components that the C API provides

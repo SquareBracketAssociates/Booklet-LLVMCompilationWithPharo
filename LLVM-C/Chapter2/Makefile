@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-g `llvm-config --cflags`
 LD=clang++
-LDFLAGS=`llvm-config --cxxflags --ldflags --libs core analysis bitwriter target  --system-libs`
+LDFLAGS=`llvm-config --cxxflags --ldflags --libs all --system-libs`
 
 all: sum
 

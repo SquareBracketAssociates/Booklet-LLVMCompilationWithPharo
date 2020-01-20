@@ -38,50 +38,61 @@ int main(int argc, char const *argv[]) {
     LLVMVerifyModule(mod, LLVMAbortProcessAction, &error);
     LLVMDisposeMessage(error);
 
-    // Bitcode writing to file
-    if (LLVMWriteBitcodeToFile(mod, "sum.bc") != 0) {
-        fprintf(stderr, "error writing bitcode to file, skipping\n");
-    }
-    // Bitcode writing to memory buffer
-    LLVMMemoryBufferRef mem = LLVMWriteBitcodeToMemoryBuffer(mod);
-    //
-    // // Choosing the triple
-    char triple[] = "x86_64";
+    // Choosing the triple
+    // char triple[] = "x86_64";
+    char* triple = LLVMGetDefaultTargetTriple(); // Using the triple of your machine
     char cpu[] = "";
     printf("%s\n",triple);
 
     // Initialization of the targets
-    LLVMTargetRef* targetRef;
+
+    // ======================================================
+    // NEED TO FIX TARGET CREATION AND INITIALIZATION
+    // ======================================================
+    LLVMInitializeAllTargets();
+    LLVMInitializeAllTargetMCs();
+    LLVMInitializeAllTargetInfos();
+    LLVMInitializeAllAsmPrinters();
+
+    LLVMTargetRef targetRef;
+    // LLVMInitializeNativeTarget();
+    // LLVMTargetRef targetRef = LLVMGetFirstTarget();
+    // ======================================================
 
     // Generating the target machine
     char** errPtrTriple;
-    LLVMBool res = LLVMGetTargetFromTriple(triple, targetRef, errPtrTriple);
-    if (res == 1)
+    LLVMBool resTriple = LLVMGetTargetFromTriple(triple, &targetRef, errPtrTriple);
+    if (resTriple != 0)
     {
         printf("%s\n",*errPtrTriple);
     }
-    printf("%d\n",res);
 
+    // LLVMCreateTargetMachine() signature
     /*LLVMTargetMachineRef T = LLVMCreateTargetMachine(LLVMTargetRef T,
     *                                                 const char* Triple,
     *                                                 const char* CPU,
     *                                                 const char* features,
     *                                                 LLVMCodeGenOptLevel Level,
     *                                                 LLVMRelocMode Reloc,
-    *                                                LLVMCodeModel CodeModel);
+    *                                                 LLVMCodeModel CodeModel);
     */
 
-    LLVMTargetMachineRef targetMachineRef = LLVMCreateTargetMachine(*targetRef, triple, cpu, "", LLVMCodeGenLevelNone, LLVMRelocDefault, LLVMCodeModelDefault);
+    LLVMTargetMachineRef targetMachineRef = LLVMCreateTargetMachine(targetRef, triple, cpu, "", LLVMCodeGenLevelNone, LLVMRelocDefault, LLVMCodeModelDefault);
 
     // Bitcode writing to file
+    // LLVMTargetMachineEmitToFile() signature
     // LLVMTargetMachineEmitToFile(LLVMTargetMachineRef T, LLVMModuleRef M, char* filename, LLVMCodeGenFileType codegen, char** ErrorMessage)
     char** errPtrFile;
-    LLVMTargetMachineEmitToFile(targetMachineRef, mod, "spec_sum.bc", LLVMObjectFile, errPtrFile);
+    LLVMBool resFile = LLVMTargetMachineEmitToFile(targetMachineRef, mod, "sum.bc", LLVMObjectFile, errPtrFile);
+    if (resFile != 0)
+    {
+        printf("%s\n",*errPtrFile);
+    }
 
-    // Bitcode writing to memory buffer
-    // LLVMTargetMachineEmitToMemoryBuffer(LLVMTargetMachineRef T, LLVMModuleRef M, LLVMCodeGenFileType codegen, char** ErrorMessage, LLVMMemoryBufferRef OutMemBuf)
-    char** errPtrMem;
-    LLVMTargetMachineEmitToMemoryBuffer(targetMachineRef, mod, LLVMObjectFile, errPtrMem, &mem);
+    // // Bitcode writing to memory buffer
+    // // LLVMTargetMachineEmitToMemoryBuffer(LLVMTargetMachineRef T, LLVMModuleRef M, LLVMCodeGenFileType codegen, char** ErrorMessage, LLVMMemoryBufferRef OutMemBuf)
+    // char** errPtrMem;
+    // LLVMTargetMachineEmitToMemoryBuffer(targetMachineRef, mod, LLVMObjectFile, errPtrMem, &mem);
 
     LLVMDisposeBuilder(builder);
 }

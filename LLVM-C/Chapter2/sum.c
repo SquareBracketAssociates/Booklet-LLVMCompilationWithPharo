@@ -39,8 +39,8 @@ int main(int argc, char const *argv[]) {
     LLVMDisposeMessage(error);
 
     // Choosing the triple
-    // char triple[] = "x86_64";
-    char* triple = LLVMGetDefaultTargetTriple(); // Using the triple of your machine
+    char triple[] = "x86_64";
+    // char* triple = LLVMGetDefaultTargetTriple(); // Using the triple of your machine
     char cpu[] = "";
     printf("%s\n",triple);
 
@@ -82,11 +82,18 @@ int main(int argc, char const *argv[]) {
     // Bitcode writing to file
     // LLVMTargetMachineEmitToFile() signature
     // LLVMTargetMachineEmitToFile(LLVMTargetMachineRef T, LLVMModuleRef M, char* filename, LLVMCodeGenFileType codegen, char** ErrorMessage)
-    char** errPtrFile;
-    LLVMBool resFile = LLVMTargetMachineEmitToFile(targetMachineRef, mod, "sum.bc", LLVMObjectFile, errPtrFile);
-    if (resFile != 0)
+    char** errPtrFileObj;
+    LLVMBool resFileObj = LLVMTargetMachineEmitToFile(targetMachineRef, mod, "sum_llvm.o", LLVMObjectFile, errPtrFileObj);
+    if (resFileObj != 0)
     {
-        printf("%s\n",*errPtrFile);
+        printf("%s\n",*errPtrFileObj);
+    }
+
+    char** errPtrFileAsm;
+    LLVMBool resFileAsm = LLVMTargetMachineEmitToFile(targetMachineRef, mod, "sum_llvm.asm", LLVMAssemblyFile, errPtrFileAsm);
+    if (resFileAsm != 0)
+    {
+        printf("%s\n",*errPtrFileAsm);
     }
 
     // // Bitcode writing to memory buffer

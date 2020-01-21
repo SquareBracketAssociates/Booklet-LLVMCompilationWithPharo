@@ -11,11 +11,14 @@ sum.o: sum.c
 sum: sum.o
 	$(LD) $< $(LDFLAGS) -o $@
 
-sum.bc: sum
+sum_llvm.o: sum
 	./sum
 
-sum.ll: sum.bc
-	llvm-dis $<
+sum_llvm.asm: sum
+	./sum
+
+# sum.ll: sum.bc
+# 	llvm-dis $<
 
 clean:
-	-rm -f sum.o sum sum.bc sum.ll
+	-rm -f sum.o sum sum.bc sum_llvm.o sum_llvm.asm

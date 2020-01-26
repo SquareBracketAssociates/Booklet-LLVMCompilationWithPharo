@@ -1,4 +1,4 @@
-!!Pharo LLVM Bindings
+&!!Pharo LLVM Bindings
 
 !!!How can we use LLVM from Pharo?
 In order to use LLVM from Pharo, the main solution is to call the LLVM C bindings
@@ -69,8 +69,23 @@ LLVMTypes class >> initialize
 	LLVMModuleRef := 'LLVMOpaqueModule*'.
 ]]]
 
+Finally, add the shared pool to the ==LLVMBinder== in its class definition:
+[[[language=Pharo
+FFILibrary subclass: #LLVMBinder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: 'LLVMTypes'
+	package: 'LLVMBinder'
+]]]
+
 Do not forget to execute this initialisation or the alias will not be taken in
-consideration! We can now use ==LLVMModuleRef== as if it was ==LLVMOpaqueModule*==
+consideration!
+
+[[[language=Pharo
+LLVMTypes initialize.
+]]]
+
+We can now use ==LLVMModuleRef== as if it was ==LLVMOpaqueModule*==
 and it will be recognised by Pharo. Our first method ==LLVMCreateModule()== can
 therefore be written:
 
@@ -93,7 +108,40 @@ binder createModuleWithName: 'myModule'.
 
 !!!Definition of the others opaque objects
 
-WIP
+From what we have seen in the previous part and by looking at the documentation,
+the different objects we will need are represented as alias of opaque objects,
+just as our ==LLVMModuleRef== and ==LLVMOpaqueModule==. Therefore, we can use the
+same process for all of them:
+- Add a class variable to our shared pool ==LLVMTypes==.
+- Add the alias to the class-side ==initialize== method.
+
+The objects and the aliases we will need are the following:
+- ==LLVMModuleRef== & ==LLVMOpaqueModule==
+- ==LLVMTypeRef== & ==LLVMOpaqueType==.
+- ==LLVMValueRef== & ==LLVMOpaqueValue==.
+- ==LLVMBasicBlockRef== & ==LLVMOpaqueBasicBlock==.
+- ==LLVMBuilderRef== & ==LLVMOpaqueBuilder==.
+- ==LLVMBool== & ==int==.
+
+(from the documentation: *LLVMTypes>https://llvm.org/doxygen/group__LLVMCSupportTypes.html*)
+
+The final definitions should therefore be:
+[[[language=Pharo
+SharedPool subclass: #LLVMTypes
+	instanceVariableNames: ''
+	classVariableNames: 'LLVMBasicBlockRef LLVMBool LLVMBuilderRef LLVMModuleRef LLVMTypeRef LLVMValueRef'
+	package: 'LLVMBinder'
+]]]
+
+[[[language=Pharo
+LLVMTypes class >> initialize
+	LLVMModuleRef := 'LLVMOpaqueModule*'.
+	LLVMTypeRef := 'LLVMOpaqueType*'.
+	LLVMValueRef := 'LLVMOpaqueValue*'.
+	LLVMBasicBlockRef := 'LLVMOpaqueBasicBlock*'.
+	LLVMBuilderRef := 'LLVMOpaqueBuilder*'.
+	LLVMBool := #int.
+]]]
 
 !!!Definition of the other functions
 

@@ -1,0 +1,102 @@
+!!Pharo LLVM Bindings
+
+!!!How can we use LLVM from Pharo?
+In order to use LLVM from Pharo, the main solution is to call the LLVM C bindings
+and use those thanks to the uFFI package (Unified Foreign Function Interface).
+This package is a façade to all external libraries that one might want to use
+from within Pharo. C libraries can therefore be called and used.
+
+Even though Pharo and C are extremely different, the call can operate by marshalling
+correctly the different types, structures and by binding the different functions
+correctly. In order to use the Pharo uFFI library, we will go over the piece of
+code we wrote in the first chapter and try to make it work from within a Pharo
+image.
+
+!!!Pharo package and first function
+The first thing to do when creating an external library binding in Pharo is to
+create a subclass of the ==FFILibrary== class that will be the façade of our
+bindings. It will hold the external functions as well as a reference to the
+library we are calling.
+
+[[[language=Pharo
+FFILibrary subclass: #LLVMBinder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'LLVMBinder'
+]]]
+
+And we can already specify the external library we will be using:
+[[[language=Pharo
+LLVMBinder >> macLibraryName
+  ^ 'libLLVM.dylib'
+]]]
+
+The first function we will write the binding for will be the first one we wrote
+in the ==sum.c== code: ==LLVMCreateModule()==. However, here comes the first issue.
+This function should output an object of type ==LLVMModuleRef== however Pharo has
+no idea what that object is and what its name means. By taking a look at the
+documentation of the *LLVMModuleRef>https://llvm.org/doxygen/group__LLVMCSupportTypes.html#gad1d1bb5f901c903a0cf09c5a053c9c56*,
+we can see that the type ==LLVMModuleRef== is in fact an alias for an ==LLVMOpaqueModule*==.
+
+In the end, we simply shifted the problem. Pharo still does not know what an
+==LLVMOpaqueModule== is. However, the ==Opaque== indication means it has been
+developed with the idea that the users should not have to look inside this type.
+The uFFI package can use this indication with the implementation of ==FFIOpaqueObject==s.
+Therefore, we can define a new ==FFIOpaqueObject== in our package:
+
+[[[language=Pharo
+FFIOpaqueObject subclass: #LLVMOpaqueModule
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'LLVMBinder'
+]]]
+
+In order to implement the alias(es), the handiest way is to create a ==SharedPool==
+of the different types we might need to get alias from or with. This can be done
+as follows:
+
+First, create the ==SharedPool== and add ==LLVMModuleRef== as a class variable:
+[[[language=Pharo
+SharedPool subclass: #LLVMTypes
+	instanceVariableNames: ''
+	classVariableNames: 'LLVMModuleRef'
+	package: 'LLVMBinder'
+]]]
+
+Then, from within the ==initialize== class method, add the following line:
+[[[language=Pharo
+LLVMTypes class >> initialize
+	LLVMModuleRef := 'LLVMOpaqueModule*'.
+]]]
+
+Do not forget to execute this initialisation or the alias will not be taken in
+consideration! We can now use ==LLVMModuleRef== as if it was ==LLVMOpaqueModule*==
+and it will be recognised by Pharo. Our first method ==LLVMCreateModule()== can
+therefore be written:
+
+[[[language=Pharo
+LLVMBinder >> createModuleWithName: aName
+	^ self ffiCall: #(LLVMModuleRef LLVMModuleCreateWithName(String aName))
+]]]
+
+The call to the external function is made through the use of ==ffiCall:== and
+the correct function signature following it.
+
+Let's try our first function! In a Playground, write and execute the following:
+[[[language=Pharo
+| binder |
+LLVMTypes initialize.
+binder := LLVMBinder uniqueInstance.
+binder createModuleWithName: 'myModule'.
+>>> a LLVMOpaqueModule((void*)@ 16r7FC032003D30)
+]]]
+
+!!!Definition of the others opaque objects
+
+WIP
+
+!!!Definition of the other functions
+
+WIP
+
+!!!

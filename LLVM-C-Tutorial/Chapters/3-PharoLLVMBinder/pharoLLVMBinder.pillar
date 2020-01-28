@@ -93,6 +93,7 @@ therefore be written:
 LLVMBinder >> createModuleWithName: aName
 	^ self ffiCall: #(LLVMModuleRef LLVMModuleCreateWithName(String aName))
 ]]]
+*LLVMModuleCreateWithName()>https://llvm.org/doxygen/group__LLVMCCoreModule.html#ga8cf6711b9359fb55d081bfc5e664370c*
 
 The call to the external function is made through the use of ==ffiCall:== and
 the correct function signature following it.
@@ -145,6 +146,78 @@ LLVMTypes class >> initialize
 
 !!!Definition of the other functions
 
-WIP
+Apart from the array definition that needs a bit more work and explanations,
+the other bindings are pretty straightforward.
 
-!!!
+[[[language=Pharo
+LLVMBinder >> createFunctionTypeWithReturnType: aType parametersVector: anArray arity: anInteger andIsVaridic: aBooleanInteger
+	^ self ffiCall: #(LLVMTypeRef LLVMFunctionType(LLVMTypeRef aType,
+																 LLVMTypeRef* anArray,
+																 unsigned anInteger,
+																 LLVMBool aBooleanInteger))
+]]]
+*LLVMFunctionType()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#ga8b0c32e7322e5c6c1bf7eb95b0961707*
+
+[[[language=Pharo
+LLVMBinder >> appendBasicBlockNamed: aName toFunction: aFunctionName
+	^ self ffiCall: #(LLVMBasicBlockRef LLVMAppendBasicBlock(LLVMValueRef aFunctionName,
+																			  String aName))
+]]]
+*LLVMAppendBasicBlock()>https://llvm.org/doxygen/group__LLVMCCoreValueBasicBlock.html#ga74f2ff28344ef72a8206b9c5925be543*
+
+[[[language=Pharo
+LLVMBinder >> createBuilder
+	^ self ffiCall: #(LLVMBuilderRef LLVMCreateBuilder())
+]]]
+*LLVMCreateBuilder()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gaceec9933fd90a94ea5ebb40eedf6136d*
+
+[[[language=Pharo
+LLVMBinder >> positionBuilder: aBuilderReference atEndOfBasicBlock: aBasicBlockName
+	self ffiCall: #(void LLVMPositionBuilderAtEnd(LLVMBuilderRef aBuilderReference,
+															                	LLVMBasicBlockRef aBasicBlockName))
+]]]
+*LLVMPositionBuilderAtEnd()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gafa58ecb369fc661ff7e58c19c46053f0*
+
+[[[language=Pharo
+LLVMBinder >> addValue: aValue toValue: anotherValue andStoreIn: aTempName using: aBasicBlockReference
+	^ self ffiCall: #(LLVMValueRef LLVMBuildAdd	(LLVMBuilderRef aBasicBlockReference,
+                                               LLVMValueRef 	aValue,
+                                               LLVMValueRef 	anotherValue,
+                                               const char * 	aTempName ))
+]]]
+*LLVMBuildAdd()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#ga5e20ba4e932d72d97a69e07ff54cfa81*
+
+[[[language=Pharo
+LLVMBinder >> buildReturnValue: aValue withBuilder: aBuilder
+	^ self ffiCall: #(LLVMValueRef LLVMBuildRet	(LLVMBuilderRef aBuilder,
+				                                       LLVMValueRef 	aValue))
+]]]
+*LLVMBuildRet()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gae4c870d69f9787fe98a824a634473155*
+
+
+These are all the different functions we used in Chapter 1. We can now take a look
+at the parameters array that we need to create the function. One way to define
+it is to use an ==FFIArray== of type ==LLVMTypeRef==. We can then fill it up with
+the needed type, e.g. ==LLVMInt32Type==. Providing a function ==createParametersArrayWithSize:==
+will handle the array creation for us. We can write it as follows:
+
+[[[language=Pharo
+LLVMBinder >> createParametersTypeArrayWithSize: aNumber
+	^  FFIArray newType: LLVMTypeRef size: aNumber
+]]]
+
+In order to then populate the array, we can do the following:
+
+[[[language=Pharo
+| binder paramArray |
+LLVMTypes initialize.
+binder := LLVMBinder uniqueInstance.
+
+paramArray := binder createParametersTypeArrayWithSize: 2.
+paramArray at:1 put: binder createInt32Type handle.
+paramArray at:2 put: binder createInt32Type.
+]]]
+
+!!!Generate the bitcode
+
+WIP

@@ -33,11 +33,6 @@ int main(int argc, char const *argv[]) {
     LLVMValueRef tmp = LLVMBuildAdd(builder, LLVMGetParam(sum, 0), LLVMGetParam(sum, 1), "tmp");
     LLVMBuildRet(builder, tmp);
 
-    //Analysis
-    char *error = NULL;
-    LLVMVerifyModule(mod, LLVMAbortProcessAction, &error);
-    LLVMDisposeMessage(error);
-
     // Choosing the triple
     char triple[] = "x86_64";
     // char* triple = LLVMGetDefaultTargetTriple(); // Using the triple of your machine
@@ -100,6 +95,11 @@ int main(int argc, char const *argv[]) {
     // // LLVMTargetMachineEmitToMemoryBuffer(LLVMTargetMachineRef T, LLVMModuleRef M, LLVMCodeGenFileType codegen, char** ErrorMessage, LLVMMemoryBufferRef OutMemBuf)
     // char** errPtrMem;
     // LLVMTargetMachineEmitToMemoryBuffer(targetMachineRef, mod, LLVMObjectFile, errPtrMem, &mem);
+
+    //Analysis
+    char *error = NULL;
+    LLVMVerifyModule(mod, LLVMAbortProcessAction, &error);
+    LLVMDisposeMessage(error);
 
     LLVMDisposeBuilder(builder);
 }

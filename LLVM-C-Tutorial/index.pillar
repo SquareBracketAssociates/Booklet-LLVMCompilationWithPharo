@@ -3,4 +3,8 @@
 
 ${inputFile:path=Chapters/0-Installation/installation.pillar}$
 
-${inputFile:path=Chapters/Chapter2/chapter2.pillar}$
+${inputFile:path=Chapters/1-FirstFunction/firstFunction.pillar}$
+
+${inputFile:path=Chapters/2-MachineCodeGeneration/machineCodeGeneration.pillar}$
+
+${inputFile:path=Chapters/3-PharoLLVMBinder/pharoLLVMBinder.pillar}$

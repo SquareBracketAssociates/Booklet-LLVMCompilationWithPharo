@@ -24,7 +24,6 @@ int main(int argc, char const *argv[]) {
     LLVMTypeRef ret_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
     LLVMValueRef sum = LLVMAddFunction(mod, "sum", ret_type);
     LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum, "entry");
-
     // Builder creation
     LLVMBuilderRef builder = LLVMCreateBuilder();
     LLVMPositionBuilderAtEnd(builder, entry);

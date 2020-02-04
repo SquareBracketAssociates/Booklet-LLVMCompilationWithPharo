@@ -1,4 +1,4 @@
-&!!Pharo LLVM Bindings
+!!Pharo LLVM Bindings
 
 !!!How can we use LLVM from Pharo?
 In order to use LLVM from Pharo, the main solution is to call the LLVM C bindings

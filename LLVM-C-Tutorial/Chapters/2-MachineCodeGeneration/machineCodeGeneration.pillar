@@ -18,26 +18,27 @@ ARCHITECTURE - VENDOR - OPERATING SYSTEM (- ENVIRONMENT)
 
 If some of the fields are not specified, the default ones will be used. The list
 of all the architectures, vendors, operating systems and environments can be found
-under: https://llvm.org/doxygen/classllvm_1_1Triple.html#details.
+under: *Triple>https://llvm.org/doxygen/classllvm_1_1Triple.html#details*.
 
 The ==Target== on the other hand is an object used only by LLVM under the hood
 in order to profile the target you will be using and be used by the ==TargetMachine==
-object. These ==Target== objects need to be initialised correctly before being
-deduced from a ==Triple==. They are used to describe that for which code may be
-intended. They are used both during the lowering of LLVM IR to machine code and
+object later on. These ==Target== objects need to be initialised correctly before
+being deduced from a ==Triple==. They are used to describe that for which code may
+be intended. They are used both during the lowering of LLVM IR to machine code and
 by some optimisations passes.
 
 The ==TargetMachine== on the other hand takes a reference to a ==Target== and then
 uses a description of the machine through the specification of the triple and the cpu.
-Last thing provided to the ==TargetMachine== are indicators on optimisations or
+Last things provided to the ==TargetMachine== are indicators on optimisations or
 the type of model we want. Fortunately, those last bits are elements taken from
 enumerations and will not be the source of any issue.
 
 !!!Triple settings
 
 The triple can either be obtained automatically from your actual machine by using
-==LLVMGetDefaultTargetTriple()== or can be specified following the form specified earlier.
-In our example, using ==LLVMGetDefaultTargetTriple()== can be done as follows:
+==LLVMGetDefaultTargetTriple()== or can be specified following the form specified
+earlier. In our example, using ==LLVMGetDefaultTargetTriple()== can be done as
+follows:
 
 [[[language=c
 char* triple = LLVMGetDefaultTargetTriple(); // Using the triple of my machine
@@ -52,13 +53,16 @@ char cpu[] = "";
 ]]]
 
 The ==cpu== string is used later on but can be defined by default by LLVM so we
-will be using it. Basically, it will guess it based on the first part of the
-triple string.
+will be using it this way. Basically, it will guess it based on the first part
+of the triple string.
 
 !!!Target Initialisation
 
-We need to provide some initialisations in order to make the targets we create
-able to be any of the ones supported by LLVM.
+Before being deduced from a ==Triple==, any ==Target== has to be initialised.
+This initialisation can be specified case by case by using the different libraries
+but since we want to be able to create machine code for any supported machine,
+we need to use all the possible initialisations and use them all. These initialisations
+are the four following:
 
 [[[language=c
 LLVMInitializeAllTargets();
@@ -72,20 +76,19 @@ LLVMInitializeAllAsmPrinters();
 *LLVMInitializeAllTargetInfos()>https://llvm.org/doxygen/group__LLVMCTarget.html#ga40188f383ddf8774ede38e8098da9a9a*
 *LLVMInitializeAllAsmPrinters()>https://llvm.org/doxygen/group__LLVMCTarget.html#gadcbb41ca7051aca660022e70ee62dd7f*
 
-The first initialisation ==LLVMInitializeAllTargets()== enables the program to
-access all available targets that LLVM is configured to support.
+# The first initialisation ==LLVMInitializeAllTargets()== enables the program to access all available targets that LLVM is configured to support.
 
-The second initialisation ==LLVMInitializeAllTargetMCs()== enables the program to
-access all available target Machine Codes.
+# The second initialisation ==LLVMInitializeAllTargetMCs()== enables the program to access all available target Machine Codes.
 
-The third initialisation ==LLVMInitializeAllTargetInfos()== makes the program able to
-link all available targets that LLVM is configured to support.
+# The third initialisation ==LLVMInitializeAllTargetInfos()== makes the program able to link all available targets that LLVM is configured to support.
 
-The last initialisation ==LLVMInitializeAllAsmPrinters()== gives access to all of
-the available ASM printers to the program.
+# The last initialisation ==LLVMInitializeAllAsmPrinters()== gives access to all of the available ASM printers to the program.
+
+Basically, ""1"" holds the description, ""2"" the machine code, ""3"" the linkers
+and ""4"" the ASM printer.
 
 Once the target initialisation is done, we can extract the ==LLVMTargetRef== we want
-from a given triple. This is done by creating an ==LLVMRef== that will be filled
+from a given triple. This is done by creating an ==LLVMTargetRef== that will be filled
 by the ==LLVMGetTargetFromTriple()== function. Adding an error pointer, we can get
 the following piece of code:
 
@@ -119,7 +122,7 @@ seven arguments are the following:
 - a string ==features==:
 - an ==LLVMCodeGenOptLevel==: The level of optimisation we want, this is an enumeration we will have to choose from (==None==,==Less==,==Default== and ==Agressive==)
 - an ==LLVMRelocMode==: The mode of relocation we want, another enumeration we have to choose from (==Default==,==Static==,==PIC==,etc.)
-- an ==LLVMCodeModel==: ??? , also an enumeration we can choose from (==Default==,==JITDefault==,==Tiny==,==Small==,etc.)
+- an ==LLVMCodeModel==: This is a term from *AMD64 ABI>https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf* (chapter 3.5) that defines the offset between data and code within instructions, also an enumeration we can choose from (==Default==,==JITDefault==,==Tiny==,==Small==,etc.)
 
 You can find more details on the existing elements of the enumerations by looking at
 the following links in the documentation:

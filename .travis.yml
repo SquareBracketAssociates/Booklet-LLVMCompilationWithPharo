@@ -16,7 +16,7 @@ install:
   - git clone --branch "$PILLAR_RELEASE" https://github.com/pillar-markup/pillar.git "$HOME/pillar"
   - ( cd $HOME/pillar; ./scripts/build.sh; )
   - $HOME/pillar/scripts/ci/install-texlive
-  - ./LLVM-C-Tutorial/_support/latex/ensure-deps.sh
+  - ./LLVM-C-Tutorial/_support/latex/ensure-deps-2019.sh
 
 script:
   - cd LLVM-C-Tutorial

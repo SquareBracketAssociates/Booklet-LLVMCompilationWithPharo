@@ -114,6 +114,8 @@ we are going to use it:
 LLVMTargetMachineRef targetMachineRef = LLVMCreateTargetMachine(targetRef, triple, cpu, "", LLVMCodeGenLevelNone, LLVMRelocDefault, LLVMCodeModelDefault);
 ]]]
 
+*LLVMCreateTargetMachine>https://llvm.org/doxygen/c_2TargetMachine_8h.html#a9b0b2b1efd30fad999f2b2a7fdbf8492*
+
 The result is an ==LLVMTargetMachineRef==, what we need and were expecting. The
 seven arguments are the following:
 - an ==LLVMTargetRef==: The ==Target== we defined earlier

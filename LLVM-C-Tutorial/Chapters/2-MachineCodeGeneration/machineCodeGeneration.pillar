@@ -187,3 +187,13 @@ retq
 
 .subsections_via_symbols
 ]]]
+
+!!!Summary
+What did we learn in this chapter?
+We extended the function we defined in the previous chapter by now being able
+to state and select a specific architecture to target and aim for when building
+the machine code. Those steps lead to a file (either object or ASM). When creating
+the Pharo bindings corresponding to the LLVM-C interface, we will want to emit
+the machine code to a memory buffer rather than a file and this can be done the
+exact same way we did while emitting to a file but using the function
+==LLVMTargetMachineEmitToMemoryBuffer()==

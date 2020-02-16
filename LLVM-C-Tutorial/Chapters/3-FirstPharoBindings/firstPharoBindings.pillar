@@ -92,7 +92,7 @@ const char* LLVMGetTarget	(	LLVMModuleRef 	M	)
 Can be written in Pharo as:
 [[[language=Pharo
 LLVMModule >> target
-	self ffiCall: #(const char *LLVMGetTarget(self))
+	self ffiCall: #(const char *LLVMGetTarget(LLVMModule self))
 ]]]
 
 A last thing we need to do for our module to be fully operational (for now) is to
@@ -110,7 +110,7 @@ LLVMModule >> finalize
 
 [[[language=Pharo
 LLVMModule >> dispose
-	self ffiCall: #(void LLVMDisposeModule(self))
+	self ffiCall: #(void LLVMDisposeModule(LLVMModule self))
 ]]]
 
 
@@ -207,19 +207,19 @@ handy:
 
 [[[language=Pharo
 LLVMFunctionSignature >> returnType
-	^ self ffiCall: #(LLVMType LLVMGetReturnType(self))
+	^ self ffiCall: #(LLVMType LLVMGetReturnType(LLVMFunctionSignature self))
 ]]]
 *LLVMGetReturnType()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#gacfa4594cbff421733add602a413cae9f*
 
 [[[language=Pharo
 LLVMFunctionSignature >> parametersNumber
-	^ self ffiCall: #(uint LLVMCountParamTypes(self))
+	^ self ffiCall: #(uint LLVMCountParamTypes(LLVMFunctionSignature self))
 ]]]
 *LLVMCountParamTypes()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#ga44fa41d22ed1f589b8202272f54aad77*
 
 [[[language=Pharo
 LLVMFunctionSignature >> isVaridic
-	^ self ffiCall: #(Boolean LLVMIsFunctionVarArg(self))
+	^ self ffiCall: #(Boolean LLVMIsFunctionVarArg(LLVMFunctionSignature self))
 ]]]
 *LLVMIsFunctionVarArg()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#ga2970f0f4d9ee8a0f811f762fb2fa7f82*
 
@@ -241,13 +241,13 @@ LLVMValue subclass: #LLVMFunction
 ]]]
 
 Then, the function ==LLVMAddFunction()== (*LLVMAddFunction>https://llvm.org/doxygen/group__LLVMCCoreModule.html#ga12f35adec814eb1d3e9a2090b14f74f5*)
-can be defined in the ==LLVMFunctionDignature== as:
+can be defined in the ==LLVMFunctionSignature== as:
 
 [[[language=Pharo
 LLVMFunctionSignature >> addToModule: aModule withName: aName
 	^ self ffiCall: #(LLVMFunction LLVMAddFunction(LLVMModule aModule,
 	                                               String aName,
-	                                               self))
+	                                               LLVMFunctionSignature self))
 ]]]
 
 Some accessors can be defined as well in the ==LLVMFunction== class, from which
@@ -264,32 +264,32 @@ LLVMValue subclass: #LLVMFunctionParameter
 
 [[[language=Pharo
 LLVMFunction >> firstParameter
-	^ self ffiCall: #(LLVMFunctionParameter LLVMGetFirstParam(self))
+	^ self ffiCall: #(LLVMFunctionParameter LLVMGetFirstParam(LLVMFunction self))
 ]]]
 
 [[[language=Pharo
 LLVMFunction >> lastParameter
-	^ self ffiCall: #(LLVMFunctionParameter LLVMGetLastParam(self))
+	^ self ffiCall: #(LLVMFunctionParameter LLVMGetLastParam(LLVMFunction self))
 ]]]
 
 [[[language=Pharo
 LLVMFunction >> nextParameterOf: aParameter
-	^ self ffiCall: #(LLVMFunctionParameter LLVMGetNextParam(self))
+	^ self ffiCall: #(LLVMFunctionParameter LLVMGetNextParam(LLVMFunction self))
 ]]]
 
 [[[language=Pharo
 LLVMFunction >> parameterAtIndex: anInteger
-	^ self ffiCall: #(LLVMFunctionParameter LLVMGetParam(self, uint anInteger))
+	^ self ffiCall: #(LLVMFunctionParameter LLVMGetParam(LLVMFunction self, uint anInteger))
 ]]]
 
 [[[language=Pharo
 LLVMFunction >> parametersNumber
-	^ self ffiCall: #(uint LLVMCountParams(self))
+	^ self ffiCall: #(uint LLVMCountParams(LLVMFunction self))
 ]]]
 
 [[[language=Pharo
 LLVMFunction >> previousParameterOf: aParameter
-	^ self ffiCall: #(LLVMFunctionParameter LLVMGetPreviousParam(self))
+	^ self ffiCall: #(LLVMFunctionParameter LLVMGetPreviousParam(LLVMFunction self))
 ]]]
 
 
@@ -316,18 +316,103 @@ And we can now add some helper functions such as:
 
 [[[language=Pharo
 LLVMBasicBlock >> name
-	^ self ffiCall: #(const char* LLVMGetBasicBlockName(self))
+	^ self ffiCall: #(const char* LLVMGetBasicBlockName(LLVMBasicBlock self))
 ]]]
 
 [[[language=Pharo
 LLVMBasicBlock >> parent
-	^ self ffiCall: #(LLVMValue LLVMGetBasicBlockParent(self))
+	^ self ffiCall: #(LLVMValue LLVMGetBasicBlockParent(LLVMBasicBlock self))
 ]]]
 
 [[[language=Pharo
 LLVMBasicBlock >> delete
-	self ffiCall: #(void LLVMDeleteBasicBlock())
+	self ffiCall: #(void LLVMDeleteBasicBlock(LLVMBasicBlock self))
 ]]]
+
+!!!Builder Creation and Operations
+The builder is created through the ==LLVMCreateBuilder()== function
+(*LLVMCreateBuilder>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gaceec9933fd90a94ea5ebb40eedf6136d*).
+This function will help us initialise our builder by creating the following class
+and method:
+
+[[[language=Pharo
+FFIExternalObject subclass: #LLVMBuilder
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'LLVMBindings-Core'
+]]]
+
+[[[language=Pharo
+LLVMBuilder class >> new
+	^ self ffiCall: #(LLVMBuilder LLVMCreateBuilder(void))
+]]]
+
+A similar call to ==finalize== and ==dispose== can be done:
+
+[[[language=Pharo
+LLVMBuilder >> dispose
+	self ffiCall: #(void LLVMDisposeBuilder(LLVMBuilder self))
+]]]
+
+[[[language=Pharo
+LLVMBuilder >> finalize
+	^ self dispose
+]]]
+
+Now, we need to define the actual builder operations (we will simply define the
+add operation as well as the building of the return value) and positioning. In
+order to define the ==LLVMBuildAdd== function
+(*LLVMBuildAdd>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#ga5e20ba4e932d72d97a69e07ff54cfa81*),
+we proceed as follows:
+
+[[[language=Pharo
+LLVMBuilder >> buildAdd: aValue to: anotherValue andStoreUnder: aTemporaryValueName
+	^ self ffiCall: #(LLVMValue LLVMBuildAdd(LLVMBuilder self,
+                                            LLVMValue 	 aValue,
+                                            LLVMValue 	 anotherValue,
+                                            const char * aTemporaryValueName ))
+]]]
+
+Next, ==LLVMBuildRet== (*LLVMBuildRet>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gae4c870d69f9787fe98a824a634473155*):
+
+[[[language=Pharo
+LLVMBuilder >> buildReturnStatementFromValue: aValue
+	^ self ffiCall: #(LLVMValue LLVMBuildRet(LLVMBuilder self,
+                                           LLVMValue aValue))
+]]]
+
+Finally, we will need to position our builder at the end of a basic block. We will
+define some more positioning functions as well. The first one, and the one we will
+use is ==LLVMPositionBuilderAtEnd()== (*LLVMPositionBuilderAtEnd>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gafa58ecb369fc661ff7e58c19c46053f0*):
+
+[[[language=Pharo
+LLVMBuilder >> positionBuilderAtEndOfBasicBlock: aBasicBlock
+	^ self ffiCall: #(void LLVMPositionBuilderAtEnd(LLVMBuilder self,
+														   		  LLVMBasicBlock aBasicBlock))
+]]]
+
+Next come ==LLVMPositionBuilderBefore()== (*LLVMPositionBuilderBefore>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gaed4e5d25ea3f3a3554f3bc4a4e22155a*)
+and ==LLVMPositionBuilder()== (*LLVMPositionBuilder>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gaf8bc5c4564732d52c5aaae2cf56d2f5c*).
+Those two functions are used to position the builder on a particular instruction.
+We can implement them as follows:
+
+[[[language=Pharo
+LLVMBuilder >> positionBuilderBeforeInstruction: anInstruction
+	^ self ffiCall: #(void LLVMPositionBuilderBefore(LLVMBuilder self,
+                                                   LLVMInstruction anInstruction))
+]]]
+
+[[[language=Pharo
+LLVMBuilder >> positionBuilderOnInstruction: anInstruction inBasicBlock: aBasicBlock
+	^ self ffiCall: #(void LLVMPositionBuilder(LLVMBuilder     self,
+                                             LLVMBasicBlock  aBasicBlock,
+                                             LLVMInstruction anInstruction))
+]]]
+
+The builder is now complete! By adding a small method to the ==LLVMModule== to
+emit the code to a memory buffer, we will have covered the code used in Chapter
+1 but from within Pharo! We will add this method in the next chapter, when
+defining the class ==LLVMMemoryBuffer==.
 
 !!!Summary
 In this first part on Pharo bindings, we defined the basic bindings of the LLVM
@@ -338,7 +423,7 @@ through code and brings more familiarity from the Pharo environment within the
 LLVM world. For now, we can run the following piece of code and expect it to work:
 
 [[[language=Pharo
-| mod paramArray sumSig retType sum |
+| mod paramArray sumSig retType sum builder param1 param2 tmp |
 
 mod := LLVMModule withName: 'mod'.
 paramArray := LLVMParameterArray withSize: 2.
@@ -350,7 +435,18 @@ retType := LLVMInt32 new.
 sumSig := LLVMFunctionSignature withReturnType: retType parametersVector: paramArray arity: 2 andIsVaridic: false.
 
 sum := sumSig addToModule: mod withName: 'sum'.
+
+builder := LLVMBuilder new.
+
+param1 := sum parameterAtIndex: 1.
+param2 := sum parameterAtIndex: 2.
+
+tmp := builder buildAdd: param1 to: param2 andStoreUnder: 'tmp'.
+builder buildReturnStatementFromValue: tmp.
+
+>>> a LLVMValue((void*)@ 16r7F878F285658)
 ]]]
 
-In the next chapter, we will focus on the builder, memory buffer and the retranscription
-of the target and target machine.
+In the next chapter, we will focus on the memory buffer and the retranscription
+of the target and target machine. These are more complicated elements and they will
+need a bit more work in order to operate properly.

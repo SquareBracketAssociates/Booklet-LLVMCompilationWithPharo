@@ -7,4 +7,6 @@ ${inputFile:path=Chapters/1-FirstFunction/firstFunction.pillar}$
 
 ${inputFile:path=Chapters/2-MachineCodeGeneration/machineCodeGeneration.pillar}$
 
-${inputFile:path=Chapters/3-PharoLLVMBinder/pharoLLVMBinder.pillar}$
+${inputFile:path=Chapters/3-FirstPharoBindings/firstPharoBindings.pillar}$
+
+${inputFile:path=Chapters/4-AdvancedPharoBindings/advancedPharoBindings.pillar}$

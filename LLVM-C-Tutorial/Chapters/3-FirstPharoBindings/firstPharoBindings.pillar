@@ -12,7 +12,7 @@ with respect to some rules. In order to use the Pharo uFFI library, we will go
 over the piece of code we wrote in the first chapter and try to make it work from
 within a Pharo image.
 
-!!!Pharo package and first function
+!!!Development plan
 The uFFI library is best used either as a façade design pattern where one object
 will hold all of the different bindings that are present in the library we want
 to use. This method works well if the library you are writing a binding for is

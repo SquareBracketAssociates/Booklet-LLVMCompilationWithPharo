@@ -17,6 +17,7 @@ install:
   - ( cd $HOME/pillar; ./scripts/build.sh; )
   - $HOME/pillar/scripts/ci/install-texlive
   - ./LLVM-C-Tutorial/_support/latex/ensure-deps.sh
+  - sudo texconfig rehash
 
 script:
   - cd LLVM-C-Tutorial && pillar build pdf index.pillar

@@ -22,7 +22,7 @@ The top-level structure in an LLVM program is a module. The official documentati
 describes this element as a translation unit or a collection of translation units
 merged together which basically means the module will keep track of functions, global
 variables, external references and symbols. They are the top-level container for
-all things defined in LLVM. We can create one by using the *LLVMModuleCreateWithName()>https://llvm.org/doxygen/group__LLVMCCoreModule.html#ga8cf6711b9359fb55d081bfc5e664370c* function as follows:
+all things defined in LLVM. We can create one by using the ==LLVMModuleCreateWithName()== function as follows:
 
 [[[language=c
 LLVMModuleRef mod = LLVMModuleCreateWithName("llvm_c_tutorial");
@@ -43,7 +43,7 @@ of the LLVM IR.
 +LLVM Type Hierarchy>figures/llvm_types.png+
 
 Using those types, we can now build our function prototype. Starting with the
-parameters type, we can define an ==LLVMTypeRef== vector with two ==int32== instances created using *LLVMInt32Type()>https://llvm.org/doxygen/group__LLVMCCoreTypeInt.html#ga458d1296782d90dee3b1d03a607ae6d7*:
+parameters type, we can define an ==LLVMTypeRef== vector with two ==int32== instances created using ==LLVMInt32Type()==:
 
 [[[language=c
 LLVMTypeRef param_types[] = { LLVMInt32Type(), LLVMInt32Type() };
@@ -57,7 +57,7 @@ that is defined as follows:
 LLVMTypeRef ret_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
 ]]]
 
-The ==*LLVMFunctionType()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#ga8b0c32e7322e5c6c1bf7eb95b0961707*== constructor takes for arguments:
+The ==LLVMFunctionType()== constructor takes for arguments:
 # the function's return type
 # the function's parameters type vector
 # the function's arity
@@ -73,7 +73,7 @@ list of instructions and it belongs to a function.
 Those blocks only have an entry and exit point, meaning the list of instructions
 will have to be executed from the beginning to the end. This means there cannot
 be conditional loops or jumps of any kind inside those basic blocks. We can define
-our basic block with the *LLVMAppendBasicBlock()>https://llvm.org/doxygen/group__LLVMCCoreValueBasicBlock.html#ga74f2ff28344ef72a8206b9c5925be543* function as follows:
+our basic block with the ==LLVMAppendBasicBlock()== function as follows:
 
 [[[language=c
 LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum, "entry");
@@ -87,8 +87,8 @@ we wanted to define and the different types and basic blocks it needed.
 In order to add instructions to our function's unique basic block, we need to use
 an instruction builder. This component, described in the documentation as
 a point within a basic block and is the exclusive means of building instructions
-using the C interface, is created using the *LLVMCreateBuilder()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gaceec9933fd90a94ea5ebb40eedf6136d* function. Then, in the same way we added the basic block to the function,
-we position the builder to start in the entry of the basic block using the *LLVMPositionBuilderAtEnd()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gafa58ecb369fc661ff7e58c19c46053f0* function.
+using the C interface, is created using the ==LLVMCreateBuilder()== function. Then, in the same way we added the basic block to the function,
+we position the builder to start in the entry of the basic block using the ==LLVMPositionBuilderAtEnd()== function.
 
 [[[language=c
 LLVMBuilderRef builder = LLVMCreateBuilder();
@@ -99,7 +99,7 @@ Now comes the function itself. We need to add the two arguments of our function
 and return the result. In order to do this, we first have to retrieve the parameters
 passed to the function. This can be done with the function ==LLVMGetParam()== that
 takes a reference to the function and the index of the wished parameter. Then,
-we need to properly create an instruction to sum them up using ==*LLVMBuildAdd()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#ga5e20ba4e932d72d97a69e07ff54cfa81*== function, and providing a return holder
+we need to properly create an instruction to sum them up using ==LLVMBuildAdd()== function, and providing a return holder
 (==tmp== here). ==LLVMBuildAdd== takes the two integers to add and a name to give
 to the result. Note that this name is required due to LLVM's policy saying that
 all instructions have to produce intermediate results
@@ -108,7 +108,7 @@ all instructions have to produce intermediate results
 LLVMValueRef tmp = LLVMBuildAdd(builder, LLVMGetParam(sum, 0), LLVMGetParam(sum, 1), "tmp");
 ]]]
 
-Finally, we call the ==*LLVMBuildRet()>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html#gae4c870d69f9787fe98a824a634473155*== function to generate the return statement and arrange for the temporary result.
+Finally, we call the ==LLVMBuildRet()== function to generate the return statement and arrange for the temporary result.
 
 [[[language=c
 LLVMBuildRet(builder, tmp);
@@ -117,7 +117,7 @@ LLVMBuildRet(builder, tmp);
 !!!!Analysis
 
 Our module is complete and we can check for any errors or exceptions by using the
-tools present in the ==analysis== library. For example, we can verify our module using the *LLVMVerifyModule>https://llvm.org/doxygen/group__LLVMCAnalysis.html#ga5645aec2d95116c0432a676db77b2cb0* function.
+tools present in the ==analysis== library. For example, we can verify our module using the ==LLVMVerifyModule== function.
 This function will analyse our module and report for any errors:
 
 [[[language=c
@@ -137,7 +137,7 @@ and aims at platform portability. Those three forms are the following:
 
 We are currently using the first form but we can get the two others. Let's start
 by writing the bitcode of the module to a file. In order to do so, we will use the
-==bitwriter== library and its *LLVMWriteBitcodeToFile>https://llvm.org/doxygen/group__LLVMCBitWriter.html#ga10b86ad44bcad46fcf80cc525949703d* function:
+==bitwriter== library and its ==LLVMWriteBitcodeToFile== function:
 
 [[[language=c
 if (LLVMWriteBitcodeToFile(mod, "sum.bc") != 0) {
@@ -206,6 +206,18 @@ $ make sum.ll
 ]]]
 
 Note that ==make all== is the equivalent of ==make sum==.
+
+!!! References
+
+The following links are useful pointers to the official LLVM reference API documentation we used in this chapter:
+
+*Modules>https://llvm.org/doxygen/group__LLVMCCoreModule.html*
+*Function Types>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html*
+*Basic Blocks>https://llvm.org/doxygen/group__LLVMCCoreValueBasicBlock.html*
+*Instruction Builder>https://llvm.org/doxygen/group__LLVMCCoreInstructionBuilder.html*
+*Int Types>https://llvm.org/doxygen/group__LLVMCCoreTypeInt.html*
+*Analyses>https://llvm.org/doxygen/group__LLVMCAnalysis.html*
+*Bit Writer>https://llvm.org/doxygen/group__LLVMCBitWriter.html*
 
 !!!Summary
 

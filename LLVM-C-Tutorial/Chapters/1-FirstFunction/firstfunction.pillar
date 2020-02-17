@@ -1,7 +1,7 @@
 !!First function in LLVM IR
 
 !!!Presentation
-In this chapter, we will be using the "LLVM C bindings" to build an in-memory
+In this chapter, we will be using the LLVM C bindings to build an in-memory
 representation of an extremely simple function. In order to do so, we will work
 around a ==sum== function whose C equivalent would be:
 
@@ -11,15 +11,15 @@ int sum(int a, int b) {
 }
 ]]]
 
-In order to use the "LLVM C bindings", we will define the succession of functions
+In order to use the LLVM C bindings, we will define the succession of functions
 to be used in a C program. We will perform in a manual way what an actual compiler
-could do to an "Abstract Syntax Tree" result of the function.
+could do to an Abstract Syntax Tree result of the function.
 
 !!!Base components
 !!!!Module
 The top-level structure in an LLVM program is a module. The official documentation
-describes this element as "a translation unit or a collection of translation units
-merged together" which basically means the module will keep track of functions, global
+describes this element as a translation unit or a collection of translation units
+merged together which basically means the module will keep track of functions, global
 variables, external references and symbols. They are the top-level container for
 all things defined in LLVM. We can create one by doing as follows:
 
@@ -82,15 +82,15 @@ LLVMBasicBlockRef entry = LLVMAppendBasicBlock(sum, "entry");
 ]]]
 *LLVMAppendBasicBlock()>https://llvm.org/doxygen/group__LLVMCCoreValueBasicBlock.html#ga74f2ff28344ef72a8206b9c5925be543*
 
-The ==LLVMAppendBasicBlock== links the "entry" basic block to our previously defined
+The ==LLVMAppendBasicBlock== links the ==entry== basic block to our previously defined
 function. We now have a module that contains all the references to the function
 we wanted to define and the different types and basic blocks it needed.
 
 !!!!Instruction Builder
 In order to add instructions to our function's unique basic block, we need to use
 an ==Instruction Builder==. This component is described in the documentation as:
-"a point within a basic block and is the exclusive means of building instructions
-using the C interface". In the same way we added the basic block to the function,
+a point within a basic block and is the exclusive means of building instructions
+using the C interface. In the same way we added the basic block to the function,
 we position the builder to start in the entry of the basic block.
 
 [[[language=c

@@ -9,4 +9,4 @@ ${inputFile:path=Chapters/2-MachineCodeGeneration/machineCodeGeneration.pillar}$
 
 ${inputFile:path=Chapters/3-FirstPharoBindings/firstPharoBindings.pillar}$
 
-${inputFile:path=Chapters/4-AdvancedPharoBindings/advancedPharoBindings.pillar}$
+${inputFile:path=Chapters/4-AdvancedPharoBindings/AdvancedPharoBindings.pillar}$

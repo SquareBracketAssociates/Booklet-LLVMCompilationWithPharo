@@ -57,7 +57,7 @@ that is defined as follows:
 LLVMTypeRef ret_type = LLVMFunctionType(LLVMInt32Type(), param_types, 2, 0);
 ]]]
 
-The ==*LLVMFunctionType()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#ga8b0c32e7322e5c6c1bf7eb95b0961707* constructor takes for arguments:
+The ==*LLVMFunctionType()>https://llvm.org/doxygen/group__LLVMCCoreTypeFunction.html#ga8b0c32e7322e5c6c1bf7eb95b0961707*== constructor takes for arguments:
 # the function's return type
 # the function's parameters type vector
 # the function's arity

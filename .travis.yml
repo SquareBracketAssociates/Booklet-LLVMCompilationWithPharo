@@ -16,18 +16,14 @@ install:
   - git clone --branch "$PILLAR_RELEASE" https://github.com/pillar-markup/pillar.git "$HOME/pillar"
   - ( cd $HOME/pillar; ./scripts/build.sh; )
   - $HOME/pillar/scripts/ci/install-texlive
-  - ./LLVM-C-Tutorial/_support/latex/ensure-deps.sh
-  - sudo texconfig rehash
+  - ./_support/latex/ensure-deps.sh
 
 script:
-  - cd LLVM-C-Tutorial && pillar build pdf index.pillar
-
-after_failure:
-  - cd LLVM-C-Tutorial && cat _result/pdf/index.log
+  - pillar build pdf index.pillar
 
 after_success:
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - mv LLVM-C-Tutorial/_result/pdf/index.pdf LLVM-C-Tutorial-WIP.pdf
+  - mv _result/pdf/index.pdf LLVM-C-Tutorial-WIP.pdf
   - bash upload.sh LLVM-C-Tutorial-WIP.pdf
 
 branches:

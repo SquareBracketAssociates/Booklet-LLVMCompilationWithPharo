@@ -1,7 +1,7 @@
-!!Objectives and Installation
+!!Introduction
 
 !!!Objectives and scope of the tutorial
-The """LLVM Project"" is a collection of compiler and toolchain technologies. Out of
+The LLVM Project is a collection of compiler and toolchain technologies. Out of
 this collection can be found numerous sub-projects such as the "LLVM Core" libraries
 providing a modern source-and-target independent optimiser along with code-generation
 support for many different CPUs. "Clang" is the LLVM-native C/C++/Obj-C compiler
@@ -9,7 +9,7 @@ which first goal is to deliver fast compiles as well as useful errors and warnin
 messages.
 
 The "LLVM Core" libraries are built around a well-specified code representation
-known as the ""LLVM Intermediate Representation"" (or ""IR""). This IR can then
+known as the LLVM Intermediate Representation (or IR). This IR can then
 be used to perform optimisations and generate target-specific machine code. It is
 therefore possible to use LLVM as an optimiser and code generator for any programming
 language.

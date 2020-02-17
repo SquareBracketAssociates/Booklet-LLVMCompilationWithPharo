@@ -3,7 +3,7 @@
 
 ${inputFile:path=Chapters/0-Installation/installation.pillar}$
 
-${inputFile:path=Chapters/1-FirstFunction/firstFunction.pillar}$
+${inputFile:path=Chapters/1-FirstFunction/firstfunction.pillar}$
 
 ${inputFile:path=Chapters/2-MachineCodeGeneration/machineCodeGeneration.pillar}$
 

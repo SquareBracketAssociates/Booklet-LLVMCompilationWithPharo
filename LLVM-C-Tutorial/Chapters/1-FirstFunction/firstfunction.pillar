@@ -162,7 +162,7 @@ $ clang `llvm-config --cflags` -c sum.c
 ]]]
 
 The first command compiles the C source code into an object file ==sum.o==. We
-need to provide the ==--cflags== in order for LLVM to work correctly. The next
+need to provide the ==\-\-cflags== in order for LLVM to work correctly. The next
 command will call the linker:
 
 [[[language=bash
@@ -178,8 +178,7 @@ Now in order to execute the output, simply perform:
 $ ./sum
 ]]]
 
-The bitcode will then be written to the file ==sum.bc==. This bitcode is the
-second form of the IR.
+The bitcode will then be written to the file ==sum.bc==. This bitcode is the second form of the IR.
 
 +IR Bitcode>figures/bitcode_sum.png
 

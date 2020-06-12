@@ -98,7 +98,7 @@ LLVMPositionBuilderAtEnd(builder, entry);
 Now comes the function itself. We need to add the two arguments of our function
 and return the result. In order to do this, we first have to retrieve the parameters
 passed to the function. This can be done with the function ==LLVMGetParam()== that
-takes a reference to the function and the index of the wished parameter. Then,
+takes a reference to the function and the index of the desired parameter. Then,
 we need to properly create an instruction to sum them up using ==LLVMBuildAdd()== function, and providing a return holder
 (==tmp== here). ==LLVMBuildAdd== takes the two integers to add and a name to give
 to the result. Note that this name is required due to LLVM's policy saying that

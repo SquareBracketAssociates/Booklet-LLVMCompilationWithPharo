@@ -15,11 +15,11 @@ within a Pharo image.
 !!!Development plan
 The uFFI library is best used either as a façade design pattern where one object
 will hold all of the different bindings that are present in the library we want
-to use. This method works well if the library you are writing a binding for is
+to use. This way works well if the library you are writing a binding for is
 small and can be contained within a few functions.
-Another method to better transcript your library and is more suitable for more
+Another way to better transcribe your library that is more suitable for 
 important libraries is to replicate an object-oriented behaviour for the different
-structures or objects you are dealing with. As our library is of wide and might
+structures or objects you are dealing with. As the LLVM library is wide and might
 keep on expanding, we will choose the second option.
 
 By looking back at the final code from the first chapter, the different steps we

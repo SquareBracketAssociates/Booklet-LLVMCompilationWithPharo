@@ -78,10 +78,10 @@ LLVMInitializeAllAsmPrinters();
 ```
 
 
-[LLVMInitializeAllTargets\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#gace43bdd15ad030e38c41ae1cb43a2539)
-[LLVMInitializeAllTargetMCs\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#ga750b05e81ab9a921bb6d2e9b912e66eb)
-[LLVMInitializeAllTargetInfos\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#ga40188f383ddf8774ede38e8098da9a9a)
-[LLVMInitializeAllAsmPrinters\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#gadcbb41ca7051aca660022e70ee62dd7f)
+- [LLVMInitializeAllTargets\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#gace43bdd15ad030e38c41ae1cb43a2539)
+- [LLVMInitializeAllTargetMCs\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#ga750b05e81ab9a921bb6d2e9b912e66eb)
+- [LLVMInitializeAllTargetInfos\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#ga40188f383ddf8774ede38e8098da9a9a)
+- [LLVMInitializeAllAsmPrinters\(\)](https://llvm.org/doxygen/group__LLVMCTarget.html#gadcbb41ca7051aca660022e70ee62dd7f)
 
 1. The first initialisation `LLVMInitializeAllTargets()` enables the program to access all available targets that LLVM is configured to support.
 
@@ -143,9 +143,9 @@ seven arguments are the following:
 
 You can find more details on the existing elements of the enumerations by looking at
 the following links in the documentation:
-[LLVMCodeGenOptLevel](https://llvm.org/doxygen/c_2TargetMachine_8h.html#acad7f73c0a2e7db5680d80becd5e719b)
-[LLVMRelocMode](https://llvm.org/doxygen/c_2TargetMachine_8h.html#ac6ed8c89bb69e7a56474cac6cf0ffb67)
-[LLVMCodeModel](https://llvm.org/doxygen/c_2TargetMachine_8h.html#a333ec2da299d964c0885bee025bef68c)
+- [LLVMCodeGenOptLevel](https://llvm.org/doxygen/c_2TargetMachine_8h.html#acad7f73c0a2e7db5680d80becd5e719b)
+- [LLVMRelocMode](https://llvm.org/doxygen/c_2TargetMachine_8h.html#ac6ed8c89bb69e7a56474cac6cf0ffb67)
+- [LLVMCodeModel](https://llvm.org/doxygen/c_2TargetMachine_8h.html#a333ec2da299d964c0885bee025bef68c)
 
 
 ### Emission to file

@@ -1,6 +1,8 @@
-!!Introduction
+## Introduction
 
-!!!Objectives and scope of the tutorial
+
+### Objectives and scope of the tutorial
+
 The LLVM Project is a collection of compiler and toolchain technologies. Out of
 this collection can be found numerous sub-projects such as the "LLVM Core" libraries
 providing a modern source-and-target independent optimiser along with code-generation
@@ -9,7 +11,7 @@ which first goal is to deliver fast compiles as well as useful errors and warnin
 messages.
 
 The "LLVM Core" libraries are built around a well-specified code representation
-known as the LLVM Intermediate Representation (or IR). This IR can then
+known as the LLVM Intermediate Representation \(or IR\). This IR can then
 be used to perform optimisations and generate target-specific machine code. It is
 therefore possible to use LLVM as an optimiser and code generator for any programming
 language.
@@ -23,24 +25,27 @@ following:
 - How to generate LLVM Intermediate Representation?
 - How to use this Intermediate Representation to generate machine code?
 
+
 One important note is that the "LLVM Core" libraries are written in C++ and since
 it is not much of use from a Pharo point of view, we will use the "LLVM C bindings".
 
-!!!Installation
+### Installation
+
 
 In order to install LLVM on your personal computer, several options are possible.
 It is possible to use the source code and build the LLVM libraries yourself. In our
-case, the easiest way is to use ==brew== and the installation it provides. It can
+case, the easiest way is to use `brew` and the installation it provides. It can
 be done using the following command:
 
-[[[language=bash
+```language=bash
 $ brew install llvm
-]]]
+```
 
-You will now need to add the paths to your ==PATH== adding the following lines
-to your ==.bash_profile==:
 
-[[[language=bash
+You will now need to add the paths to your `PATH` adding the following lines
+to your `.bash_profile`:
+
+```language=bash
 # LLVM
 # ====
 # PATHS
@@ -50,11 +55,13 @@ export DYLD_LIBRARY_PATH=/usr/local/Cellar/llvm/9.0.0_1/lib:$DYLD_LIBRARY_PATH
 export LDFLAGS="-L/usr/local/opt/llvm/lib"
 export CPPFLAGS="-I/usr/local/opt/llvm/include"
 export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
-]]]
+```
 
-@@note If you have XCode installed on your computer, chances are you might need to switch your XCode command line tools
-[[[language=bash
+
+!!note If you have XCode installed on your computer, chances are you might need to switch your XCode command line tools
+```language=bash
 $ sudo xcode-select --switch /Library/Developer/CommandLineTools/
-]]]
+```
+
 
 You should now have a working LLVM installation!
